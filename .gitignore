@@ -1,0 +1,7 @@
+! .gitignore
+! *.c
+# ignore all *.o and *.a files
+*.[oa]
+
+# ignore bin file
+plug
