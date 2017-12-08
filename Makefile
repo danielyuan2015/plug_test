@@ -38,7 +38,7 @@ LOGGER_LIB_PATH = $(LOGGER_PATH)
 
 all:$(TARGET)
 $(TARGET):$(OBJS)
-	$(CC)  -o $@ $(OBJS)
+	$(CC)  -o $@ $(OBJS) -lpthread
 	#$(CC) $(LDFLAGS)  -o $@ $(OBJS) -ldcl
 #%.o:%.c
 #	$(CC) $(CFLAGS) $(LDFLAGS) -c $< -o $@ -pthread
