@@ -62,12 +62,19 @@ void delete_event(int epollfd,int fd,int state)
 
 static void myExitHandler (int sig)
 {
+	void *retval = NULL;
+	
 	debug("App termiated!\r\n");
 	/*if(socketFd > 0) {
 		delete_event(epfd,tmpSockFd,EPOLLIN|EPOLLET);
 	}*/
 	exit_thread = true;
-	_exit(0);	
+	int ret = pthread_join(mythread, &retval);
+	if (ret < 0) {
+		perror("cannot join with thread1\n");
+	}
+	debug("Done with app termiated!\r\n");
+	//_exit(0);
 }
 
 //static int epoll_data() 
@@ -124,11 +131,11 @@ void checking_plug_thread(void *ptr)
 	 }
 	 
 	delete_event(epfd,socketFd,EPOLLIN|EPOLLET);
-	shutdown(socketFd,SHUT_RDWR);
+	//shutdown(socketFd,SHUT_RDWR);
 	close(socketFd);
 	socketFd = -1;
 	
-	//return 0;
+	debug("end of plug_thread\r\n");
 }
 
 int process_data(char *buff,int num)
@@ -154,10 +161,12 @@ int process_data(char *buff,int num)
 		if(ifinfo->ifi_flags & IFF_LOWER_UP) {
 			debug("%u: up\r\n", ifinfo->ifi_index);
 			sprintf(tempbuf,"/bin/sh %s",UP_PATH);
-			debug("%s\r\n",tempbuf);
+			//debug("%s\r\n",tempbuf);
 			system(tempbuf);
+			memset(tempbuf,0,100);
 		} else {
 			debug("%u: down\r\n", ifinfo->ifi_index);
+			memset(tempbuf,0,100);
 		}
 		
 		/*printf("%u: %s", ifinfo->ifi_index,
@@ -218,7 +227,7 @@ int main(int argc, char *argv[])
 	if (ret < 0) {
 		perror("cannot join with thread1\n");
 	}
-	printf("main app end\n");
+	debug("main app end\n");
    /* while ((retval = read(fd, buf, BUFLEN)) > 0)
     {
         for (nh = (struct nlmsghdr *)buf; NLMSG_OK(nh, retval); nh = NLMSG_NEXT(nh, retval))
@@ -245,9 +254,6 @@ int main(int argc, char *argv[])
             printf("\n");
         }
     }*/
-	//epoll_data();
-	//while(1);
-
     return 0;
 }
 
